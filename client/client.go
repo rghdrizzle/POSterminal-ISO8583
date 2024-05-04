@@ -13,12 +13,11 @@ func main(){
     fmt.Println(err)
   }
   defer conn.Close()
-  for {
     fmt.Println("Enter the message to send:")
     scanner:=bufio.NewScanner(os.Stdin)
     scanner.Scan()
     msg:=scanner.Text()
-    _,err:= conn.Write([]byte(msg))
+    _,err= conn.Write([]byte(msg))
     if err!=nil{
       fmt.Println(err)
     }
@@ -31,5 +30,4 @@ func main(){
     fmt.Println(string(buf))
 
     
-  }
 }
