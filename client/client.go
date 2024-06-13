@@ -69,13 +69,21 @@ func IsTransactionValid(accNo string,productCost string)bool{
   handleError(err)
 
   fmt.Println(string(requestMessage))
-  iso8583.Describe(isomessage,os.Stdout)
-  sendISOmsg(string(requestMessage))
-  return true // placeholder for now
+  //iso8583.Describe(isomessage,os.Stdout)
+  responseMessage:=sendISOmsg(string(requestMessage))
+  responseIsoMessage := iso8583.NewMessage(specs.Spec87ASCII)
+  err=responseIsoMessage.Unpack([]byte(responseMessage))
+  responseCode ,_:= responseIsoMessage.GetString(39)
+  iso8583.Describe(responseIsoMessage,os.Stdout)
+  if responseCode=="00"{
+    return true
+  }else{
+    return false
+  }
 
 }
 
-func sendISOmsg(msg string){
+func sendISOmsg(msg string) string{
   conn, err:= net.Dial("tcp","localhost:8080")
   if err!=nil{
     fmt.Println(err)
@@ -91,7 +99,7 @@ func sendISOmsg(msg string){
     if err!=nil{
       fmt.Println(err)
     }
-    fmt.Println(string(buf))
+    return string(buf)
 
 }
 
